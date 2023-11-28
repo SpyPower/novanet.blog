@@ -8,7 +8,9 @@ await new HostBuilder()
     {
         services.AddSingleton(new SlackConfiguration
         {
-            ExceptionsWebHook = builder.Configuration["SlackExceptionsWebHook"]
+            ExceptionsWebHook = builder.Configuration["SlackExceptionsWebHook"],
+            ApdexScoreWebHook = builder.Configuration["SlackApdexScoreWebHook"],
+            PerformanceWebHook = builder.Configuration["SlackPerformanceWebHook"]
         });
 
         services.AddHttpClient<ISlackApi, SlackApi>(client =>

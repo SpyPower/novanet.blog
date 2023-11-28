@@ -3,6 +3,6 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "SlackExceptionsWebHook": "<from_app_settings>"
+    "SlackExceptionsWebHook": "/services/T0128M1BCDT/B064ZS2S2RX/usM5wyABJAmKYw4vkg6VrXPS"
   }
 }

@@ -22,21 +22,50 @@ namespace AlertHandler.Features.HandleExceptions
         [Function("HandleExceptions")]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "exceptions")] HttpRequestData req)
         {
-            var alert = JsonSerializer
-                .Deserialize<LogAlert>(await new StreamReader(req.Body)
-                .ReadToEndAsync())!;
+            var alert = JsonSerializer.Deserialize<LogAlert>(await new StreamReader(req.Body).ReadToEndAsync())!;
 
-            _logger.LogInformation($"Exception alert: {JsonSerializer.Serialize(alert)}");
+            var serializedAlert = JsonSerializer.Serialize(alert);
+            _logger.LogInformation("Exception alert: {SerializedAlert}", serializedAlert);
 
-            await _slackApi.Send(BuildText(alert));
+            await _slackApi.Send(BuildTextHandleExceptions(alert));
+
+            return req.CreateResponse(HttpStatusCode.NoContent);
+        }
+        [Function("ApdexScore")]
+        public async Task<HttpResponseData> RunWarnings([HttpTrigger(AuthorizationLevel.Function, "post", Route = "apdex")] HttpRequestData req)
+        {
+            var alert = JsonSerializer.Deserialize<LogAlert>(await new StreamReader(req.Body).ReadToEndAsync())!;
+
+            _logger.LogInformation("Low Apdex: {@Alert}", alert);
+
+            await _slackApi.Send(BuildTextApdexScore(alert));
 
             return req.CreateResponse(HttpStatusCode.NoContent);
         }
 
-        private static string BuildText(LogAlert alert)
+        [Function("Performance")]
+        public async Task<HttpResponseData> RunPerformance([HttpTrigger(AuthorizationLevel.Function, "post", Route = "performance")] HttpRequestData req)
         {
-            // Adding an emoji because I can, and to give some life to the alert
-            return $":boom: New errors ({alert!.GetErrorCount()}): <{alert!.LinkToSearchResults()}|{alert!.ExceptionMessage()}>";
+            var alert = JsonSerializer.Deserialize<LogAlert>(await new StreamReader(req.Body).ReadToEndAsync())!;
+
+            _logger.LogInformation("Performance alert: {@Alert}", alert);
+
+            await _slackApi.Send(BuildTextPerformance(alert));
+
+            return req.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        private static string BuildTextHandleExceptions(LogAlert alert)
+        {
+            return $"`{alert!.FiredDateTime()}` - {alert!.AlertRule()} - :boom: New errors ({alert!.GetErrorCount()}): <{alert!.LinkToSearchResults()}|{alert!.ExceptionMessage()}> from {alert!.CloudRoleName()}";
+        }
+        private static string BuildTextApdexScore(LogAlert alert)
+        {
+            return $"`{alert!.FiredDateTime()}` - {alert!.AlertRule()} - :sloth: Low Apdex Score ≤ {alert!.Threshold()} (<{alert!.LinkToSearchResults()}|{alert!.MetricValue()}>)";
+        }
+        private static string BuildTextPerformance(LogAlert alert)
+        {
+            return $"`{alert!.FiredDateTime()}` - {alert!.AlertRule()} - :sloth: Server Response Time high - Dynamic Threshold";
         }
     }
 }

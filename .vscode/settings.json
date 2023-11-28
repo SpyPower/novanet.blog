@@ -1,0 +1,7 @@
+{
+  "azureFunctions.deploySubpath": "2023-02_Errors_to_Slack/src/AlertHandler/bin/Release/net7.0",
+  "azureFunctions.projectLanguage": "C#",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.preDeployTask": "publish (functions)"
+}
