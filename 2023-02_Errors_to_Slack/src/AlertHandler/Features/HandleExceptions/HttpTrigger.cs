@@ -57,8 +57,8 @@ namespace AlertHandler.Features.HandleExceptions
 
         private static string BuildTextHandleExceptions(LogAlert alert)
         {
-            string exceptionMessage = string.IsNullOrWhiteSpace(alert!.ExceptionMessage()) ? "" : $" {alert!.ExceptionMessage()}";
-            return $"`{alert!.FiredDateTime()}` - {alert!.AlertRule()} - :boom: New errors ({alert!.GetErrorCount()}): <{alert!.LinkToSearchResults()}|>{exceptionMessage} from {alert!.CloudRoleName()}";
+            string? exceptionMessage = string.IsNullOrWhiteSpace(alert?.ExceptionMessage()) ? "" : alert?.ExceptionMessage();
+            return $"`{alert?.FiredDateTime()}` - {alert?.AlertRule()} - :boom: New errors ({alert?.GetErrorCount()}): <{alert?.LinkToSearchResults()}|{exceptionMessage}> from {alert?.CloudRoleName()}";
         }
         private static string BuildTextApdexScore(LogAlert alert)
         {

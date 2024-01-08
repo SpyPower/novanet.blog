@@ -12,10 +12,9 @@
         {
             var dimension = alert!.GetDimension("outerMessage");
 
-            // We don't need the stack trace if provided.
-            // We only need some text that can be displayed in Slack to identify the error
-            if (dimension is not null && dimension.Contains("\n"))
-                dimension = dimension.Split("\n")[0];
+            // If outerMessage is null or empty, return null
+            if (string.IsNullOrWhiteSpace(dimension))
+                return null;
 
             return dimension;
         }
